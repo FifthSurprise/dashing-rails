@@ -47,6 +47,18 @@ module Dashing
 
     def new_redis_connection
       ::Redis.new(host: redis_host, port: redis_port, password: redis_password)
+      heartbeat_thread = Thread.new do
+        while true
+          @redis.publish("heartbeat","thump")
+          sleep 30.seconds
+        end
+      end
+
+      at_exit do
+        # not sure this is needed, but just in case
+        heartbeat_thread.kill
+        @redis.quit
+      end
     end
 
     private
