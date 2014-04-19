@@ -43,9 +43,6 @@ module Dashing
 
     def redis
       @redis ||= ::ConnectionPool::Wrapper.new(size: request_thread_count, timeout: 3) { new_redis_connection }
-
-      @redis = Redis.new(:host => "xxxx.com", :port => 6379)
-
       heartbeat_thread = Thread.new do
         while true
           @redis.publish("heartbeat","thump")
