@@ -46,7 +46,7 @@ module Dashing
     end
 
     def new_redis_connection
-      ::Redis.new(host: redis_host, port: redis_port, password: redis_password)
+      @redis = ::Redis.new(host: redis_host, port: redis_port, password: redis_password)
       heartbeat_thread = Thread.new do
         while true
           @redis.publish("heartbeat","thump")
