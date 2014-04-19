@@ -11,7 +11,11 @@ module Dashing
       @redis = Dashing.redis
       @redis.psubscribe("#{Dashing.config.redis_namespace}.*") do |on|
         on.pmessage do |pattern, event, data|
-          response.stream.write("data: #{data}\n\n")
+         if event == 'parse.new'
+            response.stream.write("event: parse\ndata: #{data}\n\n")
+          elsif event == 'heartbeat'
+            response.stream.write("event: heartbeat\ndata: heartbeat\n\n")
+          end
         end
       end
     rescue IOError
@@ -20,6 +24,5 @@ module Dashing
       @redis.quit
       response.stream.close
     end
-
   end
 end
